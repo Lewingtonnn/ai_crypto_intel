@@ -1,6 +1,12 @@
 from typing import List, Dict
 import requests
 import asyncio
+import dotenv
+import os
+dotenv.load_dotenv()
+source_url= os.getenv("API_URL")
+if source_url is None:
+    raise ValueError("API_URL environment variable is not set.")
 
 
 
@@ -25,42 +31,37 @@ class NewsIngestor:
         """Parse and clean raw article data."""
         articles = []
         for item in raw_data:
+            title = str(item.get("title", "").strip())
+            description = item.get("description")
+            content = title
+            if description:
+                content += description
             article = {
                 "id": item.get("id"),
                 "slug": str(item.get("slug", "").strip()),
-                "title": str(item.get("title", "").strip()),
-                "description": item.get("description", ""),
+                "title": title,
+                "description": description,
+                "content": content,
                 "published_at": item.get("published_at"),
             }
             articles.append(article)
+        return articles
+
 
 
     def run(self) -> List[Dict[str, str]]:
         """Orchestrates the full ingestion process."""
-        pass
+        raw_data = self.fetch_articles()
+        if not raw_data:
+            return[]
+        parsed_articles = self.parse_articles(raw_data)
 
+        parsed_articles = [article for article in parsed_articles if article["content"].strip()]
 
+        return parsed_articles
 
-
-#test
-import dotenv
-from dotenv import load_dotenv
-import os
-load_dotenv()
-source_url = os.getenv("API_URL")
-ingestor = NewsIngestor(source_url=source_url)
-Results= requests.get(source_url)
-results=Results.json().get("results", [])
-raw_data=results
-articles=[]
-for item in raw_data:
-    article = {
-        "id": item.get("id"),
-        "slug": str(item.get("slug", "").strip()),
-        "title": str(item.get("title", "").strip()),
-        "description": item.get("description"),
-        "published_at": item.get("published_at"),
-    }
-    articles.append(article)
-
-print(articles)
+if __name__ == "__main__":
+    ingestor = NewsIngestor(source_url)
+    articles = ingestor.run()
+    for article in articles:
+        print(article)
