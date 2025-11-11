@@ -1,0 +1,20 @@
+project:
+  name: "AI crypto intelligence"
+  environment: "local"
+  version: "1.0.0"
+
+paths:
+  raw_data_dir: "data/raw_articles"
+  processed_data_dir: "data/processed"
+  vector_db_dir: "data/vector_store"
+
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+
+database:
+  chroma_persist_dir: "data/chroma_db"
+
+
+api:
+  host: "127.0.0.1"
+  port: 8000

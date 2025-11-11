@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+langchain
+chromadb
+sentence-transformers
+pydantic
+python-dotenv
+pyyaml
+uvicorn[standard]
+black
+flake8
+pytest
+
