@@ -30,7 +30,3 @@ def load_config(config_path: str = "configs/config.yaml") -> Config:
     except Exception as e:
         raise RuntimeError(f"Failed to load configuration: {e}")
 
-
-cfg=load_config()
-print(cfg.project['name'])
-print(cfg.embedding['model_name'])
