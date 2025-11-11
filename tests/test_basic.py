@@ -1,5 +1,10 @@
-from app.config_loader import load_config
-
-cfg=load_config()
-print(cfg.project['name'])
-print(cfg.embedding['model_name'])
+#test
+import dotenv
+import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
+source_url = os.getenv("API_URL")
+Results= requests.get(source_url)
+results=Results.json().get("results", [])
+print(results)
