@@ -3,6 +3,7 @@ import requests
 import asyncio
 import dotenv
 import os
+import json
 dotenv.load_dotenv()
 source_url= os.getenv("API_URL")
 if source_url is None:
@@ -47,10 +48,14 @@ class NewsIngestor:
             articles.append(article)
         return articles
 
-
+    def save_to_json(self, articles: List[Dict[str, str]], filename: str):
+        """Save articles to a JSON file."""
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(articles, f, ensure_ascii=False, indent=4)
 
     def run(self) -> List[Dict[str, str]]:
         """Orchestrates the full ingestion process."""
+
         raw_data = self.fetch_articles()
         if not raw_data:
             return[]
