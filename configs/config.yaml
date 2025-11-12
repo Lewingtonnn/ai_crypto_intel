@@ -13,7 +13,7 @@ embedding:
 
 database:
   chroma_persist_dir: "data/chroma_db"
-
+  chroma_collection_name: "crypto_articles"
 
 api:
   host: "127.0.0.1"
