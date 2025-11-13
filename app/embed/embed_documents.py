@@ -11,10 +11,10 @@ class Embedder:
 
     def __init__(self):
         cfg = load_config()
-        self.model_name: str = cfg["embedding"]["model_name"]
+        self.model_name: str = cfg.embedding["model_name"]
         self.model = SentenceTransformer(self.model_name)
-        self.persist_directory: str = cfg["database"]["chroma_persist_dir"]
-        self.collection_name: str = cfg["database"]["chroma_collection_name"]
+        self.persist_directory: str = cfg.database["chroma_persist_dir"]
+        self.collection_name: str = cfg.database["chroma_collection_name"]
         self.client = chromadb.Client()
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name,
