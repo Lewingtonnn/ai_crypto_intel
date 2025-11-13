@@ -11,14 +11,18 @@ def main():
         raise ValueError("Missing API_URL environment variable.")
 
     # Step 1: Ingest and save
+    print("ingestion started")
     ingestor = NewsIngestor(source_url)
+    print('ingestion done, saving articles beginning')
     articles = ingestor.run()
+    print('articles collected and saved')
 
     if not articles:
         print("❌ No articles fetched. Exiting.")
         return
 
     # Step 2: Load from processed JSON (optional step if you're chaining modules)
+    print("embedding began")
     embedder = Embedder()
     loaded_articles = embedder.load_articles_from_json()
 
