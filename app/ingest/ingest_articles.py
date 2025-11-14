@@ -3,7 +3,10 @@ import requests
 import asyncio
 import dotenv
 import os
+import json
+from pathlib import Path
 dotenv.load_dotenv()
+from app.config_loader import load_config
 source_url= os.getenv("API_URL")
 if source_url is None:
     raise ValueError("API_URL environment variable is not set.")
@@ -47,16 +50,37 @@ class NewsIngestor:
             articles.append(article)
         return articles
 
+    def save_to_json(self, articles, filename="processed_articles.json"):
+        """Save parsed articles to JSON in the processed directory."""
+        cfg = load_config()
+        base_directory= Path(__file__).resolve().parents[2]
+        processed_dir = base_directory/cfg.paths["processed_data_dir"]
+        processed_dir.mkdir(parents=True, exist_ok=True)
 
+
+        # Ensure directory exists
+        os.makedirs(processed_dir, exist_ok=True)
+
+        filepath = os.path.join(processed_dir, filename)
+
+
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(articles, f, indent=2, ensure_ascii=False)
+
+        print(f"✅ Saved {len(articles)} articles to {filepath}")
 
     def run(self) -> List[Dict[str, str]]:
         """Orchestrates the full ingestion process."""
+
         raw_data = self.fetch_articles()
         if not raw_data:
             return[]
         parsed_articles = self.parse_articles(raw_data)
 
         parsed_articles = [article for article in parsed_articles if article["content"].strip()]
+
+
+        self.save_to_json(parsed_articles)
 
         return parsed_articles
 
