@@ -15,15 +15,11 @@ class Embedder:
         # Initialize Chroma client with persistence
         self.persist_directory: str = cfg.database["chroma_persist_dir"]
         self.collection_name: str = cfg.database["chroma_collection_name"]
-        self.model_name_for_function: str = cfg.embedding["model_name"]
-
+        base_directory = Path(__file__).resolve().parents[2]
+        directory_path = base_directory/self.persist_directory
         self.client = chromadb.PersistentClient(path=self.persist_directory)
         self.collection = self.client.get_or_create_collection(
-            name=self.collection_name,
-            embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(
-                model_name=self.model_name_for_function
-            ),
-        )
+            name=self.collection_name)
 
     def load_articles_from_json(self, filename="processed_articles.json"):
         """Load parsed articles from the processed directory."""
@@ -56,7 +52,7 @@ class Embedder:
 
 
         # Store in Chroma
-        self.collection.add(
+        self.collection.upsert(
             ids=ids,
             documents=documents,
             metadatas=metadatas
