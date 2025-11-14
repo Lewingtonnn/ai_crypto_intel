@@ -1,31 +1,27 @@
-from app.ingest.ingest_articles import NewsIngestor
-from app.embed.embed_documents import Embedder
-import os
-import dotenv
+import shutil
+from app.config_loader import load_config
 
-dotenv.load_dotenv()
+cfg = load_config()
+persist_dir = cfg.database["chroma_persist_dir"]
 
-def main():
-    source_url = os.getenv("API_URL")
-    if not source_url:
-        raise ValueError("Missing API_URL environment variable.")
+shutil.rmtree(persist_dir, ignore_errors=True)
+print(f"✅ Deleted old persistent folder at {persist_dir}")
 
-    # Step 1: Ingest and save
-    ingestor = NewsIngestor(source_url)
-    articles = ingestor.run()
+from sentence_transformers import SentenceTransformer
 
-    if not articles:
-        print("❌ No articles fetched. Exiting.")
-        return
+model_name = "sentence-transformers/all-MiniLM-L6-v2"
+model = SentenceTransformer(model_name)  # this must succeed without timeout
+print("✅ SentenceTransformer loaded successfully")
 
-    # Step 2: Load from processed JSON (optional step if you're chaining modules)
-    embedder = Embedder()
-    loaded_articles = embedder.load_articles_from_json()
+import chromadb
+from chromadb.utils import embedding_functions
 
-    # Step 3: Embed and store in Chroma
-    embedder.embed_and_store(loaded_articles)
+client = chromadb.PersistentClient(path=persist_dir)
 
-    print("🚀 Pipeline completed successfully.")
-
-if __name__ == "__main__":
-    main()
+collection = client.create_collection(
+    name="crypto_articles",
+    embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(
+        model_name=model_name
+    ),
+)
+print("✅ Collection created with SentenceTransformerEmbeddingFunction")
