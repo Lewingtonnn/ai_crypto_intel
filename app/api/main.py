@@ -48,7 +48,6 @@ async def execute_query(request: QueryRequest) -> QueryResponse:
         return QueryResponse(results=retrieved_docs)
 
     except ValueError as ve:
-        # This catches the "Query cannot be empty" error from your engine
         print(f"Validation Error: {ve}")
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
