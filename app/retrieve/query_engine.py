@@ -1,5 +1,3 @@
-# app/retrieve/query_engine.py
-
 from app.config_loader import load_config
 import chromadb
 from chromadb.utils import embedding_functions
