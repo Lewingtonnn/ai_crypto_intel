@@ -3,7 +3,10 @@ import chromadb
 from chromadb.utils import embedding_functions
 from chromadb import PersistentClient
 from typing import List, Dict
+
 from pathlib import Path
+
+
 
 
 class QueryEngine:
@@ -14,12 +17,13 @@ class QueryEngine:
         self.persist_directory: str = cfg.database["chroma_persist_dir"]
         self.collection_name: str = cfg.database["chroma_collection_name"]
         self.model_name_for_function : str = cfg.embedding["model_name"]
-        base_path = Path(__file__).resolve().parents[2]
-        directory_path = base_path/self.persist_directory
 
-        self.client = PersistentClient(path=directory_path)
+        self.client = PersistentClient(path=self.persist_directory)
         self.collection = self.client.get_or_create_collection(
-            name=self.collection_name
+            name=self.collection_name,
+            embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(
+                model_name=self.model_name_for_function
+            ),
         )
 
     def retrieve_similar(self, query: str, n_results: int = 5) -> List[Dict]:
@@ -31,7 +35,6 @@ class QueryEngine:
             query_texts=[query],
             n_results=n_results,
         )
-
 
         # Clean and format results
         formatted_results = []

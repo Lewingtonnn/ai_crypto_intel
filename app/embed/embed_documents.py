@@ -7,6 +7,7 @@ from ut1ls.logger import setup_logging
 logger = setup_logging()
 import json
 from app.ingest.text_spllitter import split_article_content
+
 class Embedder:
     """Handles embedding of articles and storing them in ChromaDB."""
 
@@ -16,11 +17,22 @@ class Embedder:
         # Initialize Chroma client with persistence
         self.persist_directory: str = cfg.database["chroma_persist_dir"]
         self.collection_name: str = cfg.database["chroma_collection_name"]
+
         base_directory = Path(__file__).resolve().parents[2]
         directory_path = base_directory/self.persist_directory
         self.client = chromadb.PersistentClient(path=self.persist_directory)
         self.collection = self.client.get_or_create_collection(
             name=self.collection_name)
+
+        self.model_name_for_function: str = cfg.embedding["model_name"]
+
+        self.client = chromadb.PersistentClient(path=self.persist_directory)
+        self.collection = self.client.get_or_create_collection(
+            name=self.collection_name,
+            embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(
+                model_name=self.model_name_for_function
+            ),
+        )
 
     def load_articles_from_json(self, filename="processed_articles.json"):
         """Load parsed articles from the processed directory."""
@@ -59,10 +71,28 @@ class Embedder:
         logger.info(f"Adding {len(documents)} chunks to collection...")
 
 
+        return articles
+
+    def embed_and_store(self, articles: List[Dict]):
+        """Embed articles and store them in ChromaDB."""
+        if not articles:
+            raise ValueError("No articles provided to embed and store.")
+
+        ids = [str(article["id"]) for article in articles]
+        documents = [article["content"] for article in articles]
+        metadatas = [
+            {"slug": article["slug"], "published_at": article["published_at"]}
+            for article in articles
+        ]
+
+
+        # Store in Chroma
+
         self.collection.add(
             ids=ids,
             documents=documents,
             metadatas=metadatas
         )
+
 
         logger.info(f"Successfully embedded and stored {len(documents)} chunks...")

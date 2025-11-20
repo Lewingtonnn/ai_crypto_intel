@@ -14,16 +14,16 @@ def main():
     if not source_url:
         raise ValueError("Missing API_URL environment variable.")
 
-    # # Step 1: Ingest and save
-    # logger.info("ingestion started")
-    # ingestor = NewsIngestor(source_url)
-    # logger.info('ingestion done, saving articles beginning')
-    # articles = ingestor.run()
-    # logger.info('articles collected and saved')
-    #
-    # if not articles:
-    #     logger.warning("❌ No articles fetched. Exiting.")
-    #     return
+    # Step 1: Ingest and save
+    logger.info("ingestion started")
+    ingestor = NewsIngestor(source_url)
+    logger.info('ingestion done, saving articles beginning')
+    articles = ingestor.run()
+    logger.info('articles collected and saved')
+    
+    if not articles:
+        logger.warning("❌ No articles fetched. Exiting.")
+        return
 
     # Step 2: Load from processed JSON
     logger.info("embedding began")
