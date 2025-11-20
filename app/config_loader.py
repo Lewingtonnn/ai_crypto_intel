@@ -10,6 +10,7 @@ class Config(BaseModel):
     embedding: Dict[str, Any]
     database: Dict[str, Any]
     api: Dict[str, Any]
+    llm: Dict[str, Any]
 
 
 def load_config(config_path: str = "configs/config.yaml") -> Config:

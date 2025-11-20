@@ -1,10 +1,12 @@
-# app/retrieve/query_engine.py
-
 from app.config_loader import load_config
 import chromadb
 from chromadb.utils import embedding_functions
 from chromadb import PersistentClient
 from typing import List, Dict
+
+from pathlib import Path
+
+
 
 
 class QueryEngine:

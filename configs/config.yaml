@@ -18,3 +18,8 @@ database:
 api:
   host: "127.0.0.1"
   port: 8000
+
+llm:
+  model_id: "google/flan-t5-small"
+  max_new_tokens: 128
+  temperature: 0.1

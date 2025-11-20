@@ -11,6 +11,8 @@ source_url= os.getenv("API_URL")
 if source_url is None:
     raise ValueError("API_URL environment variable is not set.")
 
+from ut1ls.logger import setup_logging
+logger = setup_logging()
 
 
 class NewsIngestor:
@@ -26,7 +28,9 @@ class NewsIngestor:
             response.raise_for_status()
             return response.json().get("results", [])
         except requests.RequestException as e:
-            print(f"Error fetching articles: {e}")
+
+            logger.error(f"Error fetching articles: {e}")
+
             return []
 
 
@@ -67,7 +71,9 @@ class NewsIngestor:
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(articles, f, indent=2, ensure_ascii=False)
 
-        print(f"✅ Saved {len(articles)} articles to {filepath}")
+
+        logger.info(f"✅ Saved {len(articles)} articles to {filepath}")
+
 
     def run(self) -> List[Dict[str, str]]:
         """Orchestrates the full ingestion process."""
@@ -88,4 +94,5 @@ if __name__ == "__main__":
     ingestor = NewsIngestor(source_url)
     articles = ingestor.run()
     for article in articles:
-        print(article)
+
+        logger.info(article)

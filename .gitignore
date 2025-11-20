@@ -1,0 +1,16 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE junk
+.idea/
+.vscode/
+
+# Data
+data/chroma_db/
+data/processed/
+*.sqlite3
+
+# Environment
+.env

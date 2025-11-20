@@ -10,4 +10,7 @@ uvicorn[standard]
 black
 flake8
 pytest
-
+langchain_core
+langchain_community
+torch
+transformers
