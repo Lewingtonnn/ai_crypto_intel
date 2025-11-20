@@ -36,7 +36,7 @@ async def execute_query(request: QueryRequest):
 
     try:
 
-        retrieved_docs = query_engine.retrieve_similar(request.query, n_results=5)
+        retrieved_docs = query_engine.retrieve_similar(request.query, n_results=3)
 
         answer = llm_engine.generate_answer(request.query, retrieved_docs)
 
