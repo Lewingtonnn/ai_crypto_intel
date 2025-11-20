@@ -1,0 +1,25 @@
+project:
+  name: "AI crypto intelligence"
+  environment: "local"
+  version: "1.0.0"
+
+paths:
+  raw_data_dir: "data/raw_articles"
+  processed_data_dir: "data/processed"
+  vector_db_dir: "data/vector_store"
+
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+
+database:
+  chroma_persist_dir: "data/chroma_db"
+  chroma_collection_name: "crypto_articles"
+
+api:
+  host: "127.0.0.1"
+  port: 8000
+
+llm:
+  model_id: "google/flan-t5-small"
+  max_new_tokens: 128
+  temperature: 0.1
