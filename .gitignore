@@ -8,10 +8,10 @@ __pycache__/
 .vscode/
 
 # Data
-data/
+data_store/
 chroma/
 data/chroma_db/
-data/processed/
+!data/processed/
 *.sqlite3
 
 # Environment

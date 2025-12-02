@@ -28,6 +28,7 @@ COPY run_pipeline.py .
 COPY run_api.py .
 COPY .env .
 COPY data/processed ./data/processed
+RUN rm -rf data/chroma_db data/vector_store data_store
 
 RUN python run_pipeline.py
 
