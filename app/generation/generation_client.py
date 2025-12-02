@@ -1,5 +1,5 @@
 from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 from app.config_loader import load_config
 from typing import List, Dict
