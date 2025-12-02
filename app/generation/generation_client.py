@@ -1,9 +1,10 @@
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain_huggingface import HuggingFacePipeline
 from langchain_core.prompts import PromptTemplate
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 from app.config_loader import load_config
 from typing import List, Dict
 import torch
+import os
 from ut1ls.logger import setup_logging
 
 logger = setup_logging()
@@ -13,7 +14,7 @@ class LLMEngine:
     def __init__(self):
         self.cfg = load_config()
         self.repo_id = self.cfg.llm["model_id"]
-        self.chain = None  # Start as None
+        self.chain = None
         self.pipeline = None
 
     def _load_model(self):
@@ -22,9 +23,18 @@ class LLMEngine:
             return
 
         logger.info(f"⏳ Lazy Loading LLM: {self.repo_id}...")
+
+        # --- AUTHENTICATION FIX ---
+        # Get token from env (support both standard naming conventions)
+        hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN") or os.getenv("HF_TOKEN")
+
+        if not hf_token:
+            logger.warning("⚠️ No Hugging Face token found. Rate limits may apply.")
+
         try:
-            tokenizer = AutoTokenizer.from_pretrained(self.repo_id)
-            model = AutoModelForSeq2SeqLM.from_pretrained(self.repo_id)
+            # Pass the token explicitly to the tokenizer and model loader
+            tokenizer = AutoTokenizer.from_pretrained(self.repo_id, token=hf_token)
+            model = AutoModelForSeq2SeqLM.from_pretrained(self.repo_id, token=hf_token)
 
             pipe = pipeline(
                 "text2text-generation",

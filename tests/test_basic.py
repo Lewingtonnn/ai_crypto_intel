@@ -1,27 +1,31 @@
-import shutil
-from app.config_loader import load_config
+import requests
+import json
 
-cfg = load_config()
-persist_dir = cfg.database["chroma_persist_dir"]
+# Your Deployment URL
+API_URL = "https://crypto-rag-api-351995124578.us-central1.run.app/api/v1/query"
 
-shutil.rmtree(persist_dir, ignore_errors=True)
-print(f"✅ Deleted old persistent folder at {persist_dir}")
 
-from sentence_transformers import SentenceTransformer
+def ask_the_oracle(question):
+    payload = {"query": question}
+    headers = {"Content-Type": "application/json"}
 
-model_name = "sentence-transformers/all-MiniLM-L6-v2"
-model = SentenceTransformer(model_name)  # this must succeed without timeout
-print("✅ SentenceTransformer loaded successfully")
+    print(f"📡 Sending query to Cloud Run: '{question}'...")
 
-import chromadb
-from chromadb.utils import embedding_functions
+    try:
+        response = requests.post(API_URL, json=payload, headers=headers)
+        response.raise_for_status()  # Check for HTTP errors
 
-client = chromadb.PersistentClient(path=persist_dir)
+        data = response.json()
 
-collection = client.create_collection(
-    name="crypto_articles",
-    embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name=model_name
-    ),
-)
-print("✅ Collection created with SentenceTransformerEmbeddingFunction")
+        print("\n📝 --- INTELLIGENCE REPORT ---")
+        print(data["answer"])
+        print("\n🔍 --- SOURCES ---")
+        for source in data["sources"]:
+            print(f"- {source['slug']} (Score: {source['similarity_score']:.2f})")
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+
+
+if __name__ == "__main__":
+    ask_the_oracle("What is the latest news regarding Ethereum and gas fees?")
