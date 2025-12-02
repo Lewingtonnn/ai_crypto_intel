@@ -1,0 +1,16 @@
+# .gcloudignore
+
+# Version Control
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local Data (Exclude the generated DB, it's too heavy)
+data/chroma_db/
+data_store/
+chroma/
