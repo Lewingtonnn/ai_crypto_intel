@@ -67,7 +67,7 @@ This project is an end-to-end **Retrieval-Augmented Generation (RAG)** pipeline 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/ai-crypto-intel.git
+git clone https://github.com/lewingtonnn/ai-crypto-intel.git
 cd ai-crypto-intel
 
 # Create virtual environment
